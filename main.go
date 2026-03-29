@@ -57,7 +57,7 @@ const rol = "Developer"
 const ubicacion = "España"
 
 var sobre = []string{
-	"Desarrolladora apasionada por construir cosas chulas.",
+	"Apasionada por construir aplicaciones desde cero, explorar nuevos lenguajes de programación y llevar ideas al código. ",
 	"",
 	"Actualmente aprendiendo Go y explorando el mundo de las TUI.",
 }
@@ -74,20 +74,26 @@ var proyectos = []Proyecto{
 		Nombre: "SSH Portfolio",
 		Desc:   "Este mismo portafolio: un servidor SSH interactivo.",
 		Stack:  "Go · Wish · Bubble Tea · Lip Gloss",
-		URL:    "github.com/alba/ssh-portfolio",
+		URL:    "github.com/albacostas/Portfolio-ssh",
 	},
 	{
-		Nombre: "Proyecto 2",
-		Desc:   "Descripción breve.",
-		Stack:  "Go · PostgreSQL",
-		URL:    "github.com/alba/proyecto2",
+		Nombre: "Interactive-Notch",
+		Desc:   "App para macOS desarrollada en Swift que añade utilidades al notch mostrando accesos rápidos a notas y a un spotify mini player.",
+		Stack:  "Swift · SwiftUI",
+		URL:    "github.com/albacostas/Notch",
+	},
+	{
+		Nombre: "Expenses",
+		Desc:   "App para macOS desarrollada en Swift que permite gestionar gastos e ingresos.",
+		Stack:  "Swift · SwiftUI · CoreData",
+		URL:    "github.com/albacostas/Expenses",
 	},
 }
 
 var contacto = []string{
 	"Email:    albacostasfernandez@gmail.com",
 	"GitHub:   github.com/albacostas",
-	"LinkedIn: linkedin.com/in/alba",
+	"LinkedIn: www.linkedin.com/in/albacostasfernandez",
 }
 
 // ── Modelo ─────────────────────────────────────────────────────────────────
@@ -223,7 +229,7 @@ func main() {
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, syscall.SIGINT, syscall.SIGTERM)
 
-	fmt.Println("🚀 SSH Portfolio escuchando en :2222")
+	fmt.Println("   SSH Portfolio escuchando en :2222")
 	fmt.Println("   Conéctate con: ssh localhost -p 2222")
 
 	go func() {
@@ -236,5 +242,5 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	srv.Shutdown(ctx)
-	fmt.Println("\n👋 Servidor cerrado.")
+	fmt.Println("\n Servidor cerrado.")
 }
