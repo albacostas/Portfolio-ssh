@@ -1,0 +1,39 @@
+# Binarios compilados
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.out
+
+# Carpetas
+bin/
+dist/
+build/
+.ssh/
+
+# Dependencias Go
+vendor/
+go.work.sum
+
+# IDE y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Testing y coverage
+*.test
+coverage.out
+*.prof
+
+# Archivos temporales
+*.tmp
+.env
+.env.local
