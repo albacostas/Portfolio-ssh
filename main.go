@@ -49,44 +49,45 @@ var (
 // ── Arte ASCII ────────────────────────────────────────────────────────────
 
 const avatarASCII = `                                                                                                                                                                          
-                              #                                                                     
-                            ########                                                                
-                             ##      #                                                              
-                            #         ##                                                            
-                           #           ##                                                           
-                           #            #      ########      ###                                    
-                            #            #   ##        ##   #  ###                                  
-                             #            ####          ## ##  ###                                  
-                             #              #   #        ####    #                                  
-                              # ##          #         #          #                                  
-                              #             #          #        #                                   
-                             #            ####    ######  ###   #                                   
-                              #         #                    ####                                   
-                               #   ####                           ##                                
-                                ##   ##                             #                               
-                               #    # #          ####                ##                             
-                             ##     # ##        ######                 #                            
-                            ##      ####        ######        #        #                            
-                            #       ####                               ##                           
-                            #       ####                     #           #                          
-                            #        ###            #                     #                         
-                           #                       #    #       ##         #                        
-                          #       #            #       #       ## #         #                       
-                          #                    #               ####         #                       
-                          #      #       ###                    ###         #                       
-                          #            #####                         #      #                       
-                          #            # ###                         #      #                       
-                          #     #       ###                                #                        
-                           #                                               #                        
-                            #                     ####            #      #                          
-                             #                    ####           ##     #                           
-                             ##          #                     #       #                            
-                              #         ####              #   #                                     
-                               ##                    ###             #                              
-                                 ###                              ##                                
-                                     ##                         ##                                  
-                                       ####            ########                                     
-                                              #####                                                 
+                    h                                               
+          ########                                                                
+         ##      #                                                              
+        #         ##                                                            
+       #           ##                                                           
+       #            #      ########      ###                                    
+        #            #   ##        ##   #  ###                                  
+         #            ####          ## ##  ###                                  
+         #              #   #        ####    #                                  
+          # ##          #         #          #                                  
+      #             #          #        #                                   
+     #            ####    ######  ###   #                                   
+      #         #                    ####                                   
+          #   ####                           ##                                
+            ##   ##                             #                               
+           #    # #          ####                ##                             
+         ##     # ##        ######                 #                            
+        ##      ####        ######        #        #                            
+        #       ####                               ##                           
+        #       ####                     #           #                          
+        #        ###            #                     #                         
+       #                       #    #       ##         #                        
+       #       #            #       #       ## #         #                       
+      #                    #               ####         #                       
+       #      #       ###                    ###         #                       
+      #            #####                         #      #                       
+      #            # ###                         #      #                       
+      #     #       ###                                #                        
+        #                                               #                        
+        #                     ####            #      #                          
+         #                    ####           ##     #                           
+         ##          #                     #       #                            
+          #         ####              #   #                                     
+           ##                    ###             #                              
+             ###                              ##                                
+                 ##                         ##                                  
+                   ####            ########                                     
+                          #####                                                 
+                                                                                                                             
                                                                                                     
 `
 // ── Datos ─────────────────────────────────────────────────────────────────
@@ -106,19 +107,19 @@ var proyectos = []Proyecto{
 		Nombre: "SSH Portfolio", 
 		Desc: "Interactive ssh server.", 
 		Stack: "Go · Wish", 
-		URL: "github.com/albacostas/Portfolio-ssh"
+		URL: "github.com/albacostas/Portfolio-ssh",
 	},
 	{
 		Nombre: "Interactive-Notch", 
 		Desc: "App for macOS notch functions.", 
 		Stack: "Swift · SwiftUI", 
-		URL: "github.com/albacostas/Notch"
+		URL: "github.com/albacostas/Notch",
 	},
 	{
 		Nombre: "Expenses", 
 		Desc: "Track your expenses on macOS.", 
 		Stack: "Swift · CoreData", 
-		URL: "github.com/albacostas/Expenses"
+		URL: "github.com/albacostas/Expenses",
 	},
 }
 
