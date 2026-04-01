@@ -133,6 +133,14 @@ var projects = []Project{
 		Stack: "Swift · CoreData · AppKit",
 		URL:   "github.com/albacostas/Expenses",
 	},
+	{
+		Name: "3D Audio Visualizer",
+		Desc: "Interactive 3D engine that transforms real-tiem audio signals into dynamic mesh deformactions. \n" +
+			"  Features: 2,000+ reactive particles, frequency-based sphere pulsing, and custom lighting.\n" +
+			"  Built with low-latency signal processing (512-frame buffer).",
+		Stack: "C++ · OpenGL · PortAudio · GLUT",
+		URL:   "https://github.com/albacostas/audio-visualizer",
+	}
 }
 
 var skills = []Skill{
@@ -163,13 +171,13 @@ var experience = []Experience{
 		Title:   "Computer Science Student",
 		Company: "University of Santiago de Compostela",
 		Period:  "2023 - Present",
-		Desc:    "Focusing on algorithms, databases, and system design",
+		Desc:    "Focusing on algorithms, databases and system design",
 	},
 	{
 		Title:   "High School Diploma - Science Concentration",
 		Company: "Colegio Apóstol Santiago - Jesuitas",
 		Period:  "2021 - 2023",
-		Desc:    "Advanced coursework in Mathematics, Physics, and Chemistry.",
+		Desc:    "Advanced coursework in Mathematics, Physics and Chemistry.",
 	},
 }
 
@@ -292,8 +300,11 @@ func (m model) View() string {
 
 func (m model) viewAbout() string {
 	content := labelStyle.Render("$ whoami") + "\n\n" +
-		"Full Stack Developer passionate about building scalable applications.\n" +
-		"I love learning new technologies, exploring system design, and creating products that solve real problems.\n\n" +
+		"Developer with a passion for building things and learning continuosly.\n" +
+		"I'm passionate about exploring new technologies and languages, and creating products that solve real problems.\n\n" +
+		"I actively participate in CTF competitions, honing my skills in problem-solving, and cybersecurity talks.\n\n" +
+		"Beyond my university studies, I'm self-driven learner who pursues independent projects and explores emerging techonologies whenever my curiosity is sparked. \n\n" +
+		"Currently pursuing my Computer Science degree while looking for the next challenge."
 		greenTextStyle.Render("✓ Open to opportunities and collaborations")
 
 	return boxStyle.Render(content)
