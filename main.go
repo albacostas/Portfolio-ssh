@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	//"strings"
 	"syscall"
 	"time"
 
@@ -16,120 +17,171 @@ import (
 	bbtea "github.com/charmbracelet/wish/bubbletea"
 )
 
-// ── Estilos: Fusión de Cuadros + Layout de Foto ───────────────────────────
+// ── Refined Styles ────────────────────────────────────────────────────────
 
 var (
-	accentColor = lipgloss.Color("#7C3AED") // Morado original
-	cyanColor   = lipgloss.Color("#22D3EE") // Cian de la foto
+	accentColor = lipgloss.Color("#7C3AED")
+	cyanColor   = lipgloss.Color("#22D3EE")
 	grayColor   = lipgloss.Color("#6B7280")
 	whiteColor  = lipgloss.Color("#F9FAFB")
+	greenColor  = lipgloss.Color("#10B981")
 
-	// Estilo para la columna izquierda (Arte ASCII)
-	asciiStyle = lipgloss.NewStyle().Foreground(grayColor).MarginRight(4)
+	asciiStyle = lipgloss.NewStyle().
+		Foreground(grayColor).
+		Padding(0).
+		Margin(0)
 
-	// Estilo de los cuadros (Tus cuadros originales)
 	boxStyle = lipgloss.NewStyle().
-			Border(lipgloss.RoundedBorder()).
-			BorderForeground(accentColor).
-			Padding(1, 2).
-			Width(60)
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(accentColor).
+		Padding(1, 2).
+		Width(80)
 
 	titleStyle = lipgloss.NewStyle().Foreground(accentColor).Bold(true)
 	labelStyle = lipgloss.NewStyle().Foreground(cyanColor).Bold(true)
 	dimStyle   = lipgloss.NewStyle().Foreground(grayColor)
 
-	// Pestañas
 	activeTabStyle = lipgloss.NewStyle().Foreground(whiteColor).Background(accentColor).Padding(0, 1)
 	tabStyle       = lipgloss.NewStyle().Foreground(grayColor).Padding(0, 1)
-
-	// Estilo para el cursor cian (corrección para .Render)
-	cyanTextStyle = lipgloss.NewStyle().Foreground(cyanColor)
+	cyanTextStyle  = lipgloss.NewStyle().Foreground(cyanColor)
+	greenTextStyle = lipgloss.NewStyle().Foreground(greenColor)
 )
 
-// ── Arte ASCII ────────────────────────────────────────────────────────────
-
-const avatarASCII = `                                                                                                                                                                          
-                    h                                               
-          ########                                                                
-         ##      #                                                              
-        #         ##                                                            
-       #           ##                                                           
-       #            #      ########      ###                                    
-        #            #   ##        ##   #  ###                                  
-         #            ####          ## ##  ###                                  
-         #              #   #        ####    #                                  
-          # ##          #         #          #                                  
-      #             #          #        #                                   
-     #            ####    ######  ###   #                                   
-      #         #                    ####                                   
+const avatarASCII = `
+          ########
+         ##      #   
+        #         ##  
+       #           ##  
+       #            #      ########      ###   
+        #            #   ##        ##   #  ### 
+         #            ####          ## ##  ### 
+         #              #   #        ####    #    
+          # ##          #         #          # 
+      #             #          #        #  
+     #            ####    ######  ###   #    
+      #         #                    #### 
           #   ####                           ##                                
             ##   ##                             #                               
-           #    # #          ####                ##                             
-         ##     # ##        ######                 #                            
-        ##      ####        ######        #        #                            
-        #       ####                               ##                           
-        #       ####                     #           #                          
-        #        ###            #                     #                         
-       #                       #    #       ##         #                        
-       #       #            #       #       ## #         #                       
-      #                    #               ####         #                       
-       #      #       ###                    ###         #                       
-      #            #####                         #      #                       
-      #            # ###                         #      #                       
-      #     #       ###                                #                        
-        #                                               #                        
-        #                     ####            #      #                          
-         #                    ####           ##     #                           
+           #    # #          ####                ##
+         ##     # ##        ######                 # 
+        ##      ####        ######        #        #    
+        #       ####                               ##  
+        #       ####                     #           #  
+        #        ###            #                     # 
+       #                       #    #       ##         #  
+       #       #            #       #       ## #        # 
+      #                    #               ####          #  
+       #      #       ###                    ###         #    
+      #            #####                         #       #  
+      #            # ###                         #      #   
+      #     #       ###                                #   
+        #                                             #  
+        #                     ####            #      #  
+         #                    ####           ##     # 
          ##          #                     #       #                            
-          #         ####              #   #                                     
-           ##                    ###             #                              
-             ###                              ##                                
-                 ##                         ##                                  
-                   ####            ########                                     
-                          #####                                                 
-                                                                                                                             
-                                                                                                    
-`
-// ── Datos ─────────────────────────────────────────────────────────────────
+          #         ####              #   #       #  
+           ##                    ###             #   
+             ###                              ##   
+                 ##                         ##     
+                   ####            ########   
+                          #####`
 
-const nombre = "Alba Costas Fernández"
-const rol = "Developer"
+// ── Data Structures ───────────────────────────────────────────────────────
 
-type Proyecto struct {
-	Nombre string
-	Desc   string
-	Stack  string
-	URL    string
+type Project struct {
+	Name  string
+	Desc  string
+	Stack string
+	URL   string
 }
 
-var proyectos = []Proyecto{
-	{ 	
-		Nombre: "SSH Portfolio", 
-		Desc: "Interactive ssh server.", 
-		Stack: "Go · Wish", 
-		URL: "github.com/albacostas/Portfolio-ssh",
+type Skill struct {
+	Category string
+	Items    []string
+}
+
+type Experience struct {
+	Title    string
+	Company  string
+	Period   string
+	Desc     string
+}
+
+// ── Portfolio Data ────────────────────────────────────────────────────────
+
+var projects = []Project{
+	{
+		Name: "SSH Portfolio",
+		Desc: "Interactive SSH server with dynamic terminal UI\n" +
+			"  Features: Real-time navigation, ASCII art rendering\n" +
+			"  Deployed and accessible via SSH",
+		Stack: "Go · Charmbracelet · Bubbletea · Wish",
+		URL:   "github.com/albacostas/Portfolio-ssh",
 	},
 	{
-		Nombre: "Interactive-Notch", 
-		Desc: "App for macOS notch functions.", 
-		Stack: "Swift · SwiftUI", 
-		URL: "github.com/albacostas/Notch",
+		Name: "Interactive Notch",
+		Desc: "macOS app for managing and controlling notch functions\n" +
+			"  Features: Real-time status display, system integration\n",
+		Stack: "Swift · SwiftUI · CoreData",
+		URL:   "github.com/albacostas/Notch",
 	},
 	{
-		Nombre: "Expenses", 
-		Desc: "Track your expenses on macOS.", 
-		Stack: "Swift · CoreData", 
-		URL: "github.com/albacostas/Expenses",
+		Name: "Expenses Tracker",
+		Desc: "Native macOS expense tracking application\n" +
+			"  Features: Data persistence, charts, export to CSV\n" +
+			"  Optimized for performance and user experience",
+		Stack: "Swift · CoreData · AppKit",
+		URL:   "github.com/albacostas/Expenses",
 	},
 }
 
-var tabs = []string{"About me", "Projects", "Contact"}
+var skills = []Skill{
+	{
+		Category: "Languages",
+		Items:    []string{"Swift", "Java", "C", "C++", "Python"},
+	},
+	{
+		Category: "Frontend",
+		Items:    []string{"SwiftUI", "HTML/CSS", "Tailwind CSS"},
+	},
+	{
+		Category: "Backend",
+		Items:    []string{"Node.js", "REST APIs", "PostgreSQL"},
+	},
+	{
+		Category: "Tools & DevOps",
+		Items:    []string{"Git", "Docker", "Xcode", "VS Code", "GitHub Actions", "Linux"},
+	},
+	{
+		Category: "Platforms",
+		Items:    []string{"iOS", "Linux", "Web"},
+	},
+}
 
-// ── Modelo ────────────────────────────────────────────────────────────────
+var experience = []Experience{
+	{
+		Title:   "Computer Science Student",
+		Company: "University of Santiago de Compostela",
+		Period:  "2023 - Present",
+		Desc:    "Focusing on algorithms, databases, and system design",
+	},
+	{
+		Title:   "High School Diploma - Science Concentration",
+		Company: "Colegio Apóstol Santiago - Jesuitas",
+		Period:  "2021 - 2023",
+		Desc:    "Advanced coursework in Mathematics, Physics, and Chemistry.",
+	},
+}
+
+var tabs = []string{"About", "Skills", "Projects", "Experience", "Contact"}
+
+// ── Model ─────────────────────────────────────────────────────────────────
 
 type model struct {
 	tab     int
-	proyIdx int
+	projIdx int
+	skillIdx int
+	expIdx  int
 	width   int
 	height  int
 }
@@ -146,38 +198,53 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "right", "l", "tab":
 			m.tab = (m.tab + 1) % len(tabs)
-			m.proyIdx = 0
+			m.projIdx = 0
+			m.skillIdx = 0
+			m.expIdx = 0
 		case "left", "h", "shift+tab":
 			m.tab = (m.tab - 1 + len(tabs)) % len(tabs)
-			m.proyIdx = 0
+			m.projIdx = 0
+			m.skillIdx = 0
+			m.expIdx = 0
 		case "down", "j":
-			if m.tab == 1 {
-				m.proyIdx = (m.proyIdx + 1) % len(proyectos)
+			if m.tab == 2 {
+				m.projIdx = (m.projIdx + 1) % len(projects)
+			} else if m.tab == 1 {
+				m.skillIdx = (m.skillIdx + 1) % len(skills)
+			} else if m.tab == 3 {
+				m.expIdx = (m.expIdx + 1) % len(experience)
 			}
 		case "up", "k":
-			if m.tab == 1 {
-				m.proyIdx = (m.proyIdx - 1 + len(proyectos)) % len(proyectos)
+			if m.tab == 2 {
+				m.projIdx = (m.projIdx - 1 + len(projects)) % len(projects)
+			} else if m.tab == 1 {
+				m.skillIdx = (m.skillIdx - 1 + len(skills)) % len(skills)
+			} else if m.tab == 3 {
+				m.expIdx = (m.expIdx - 1 + len(experience)) % len(experience)
 			}
 		}
 	}
 	return m, nil
 }
 
-// ── Renderizado ───────────────────────────────────────────────────────────
+// ── Rendering ─────────────────────────────────────────────────────────────
 
 func (m model) View() string {
 	if m.width == 0 {
-		return "Cargando..."
+		return "Loading..."
 	}
 
-	// 1. Columna Izquierda: Arte ASCII
-	colIzquierda := asciiStyle.Render(avatarASCII)
+	asciiContent := avatarASCII
+	colLeft := asciiStyle.Width(80).Render(asciiContent)
+	// Left column: ASCII art
+	//colLeft := asciiStyle.Render(strings.TrimSpace(avatarASCII))
 
-	// 2. Cabecera (Nombre y Ubicación)
-	header := titleStyle.Render(fmt.Sprintf("%s — %s", nombre, rol)) + "\n" +
-		dimStyle.Render("📍 Santiago de Compostela, Spain")
+	// Header
+	header := titleStyle.Render("Alba Costas Fernández — Developer") + "\n" +
+		dimStyle.Render("📍 Santiago de Compostela, Spain") + "\n" +
+		dimStyle.Render("Building apps. Learning continuously. Open to opportunities.")
 
-	// 3. Pestañas
+	// Tabs
 	var tabsRow string
 	for i, t := range tabs {
 		if i == m.tab {
@@ -187,61 +254,141 @@ func (m model) View() string {
 		}
 	}
 
-	// 4. Contenido en CUADRO (boxStyle)
+	// Dynamic content
 	var dynamicContent string
 	switch m.tab {
-	case 0: // About
-		dynamicContent = boxStyle.Render(
-			labelStyle.Render("$ whoami") + "\n\n" +
-				"Apasionada por construir aplicaciones desde cero,\n" +
-				"explorar nuevos lenguajes y llevar ideas al código.")
-	case 1: // Projects
-		dynamicContent = m.viewProyectos()
-	case 2: // Contact
-		dynamicContent = boxStyle.Render(
-			labelStyle.Render("$ contact --list") + "\n\n" +
-				"Email:    albacostasfernandez@gmail.com\n" +
-				"GitHub:   github.com/albacostas\n" +
-				"LinkedIn: linkedin.com/in/albacostasfernandez")
+		case 0:
+			dynamicContent = m.viewAbout()
+		case 1:
+			dynamicContent = m.viewSkills()
+		case 2:
+			dynamicContent = m.viewProjects()
+		case 3:
+			dynamicContent = m.viewExperience()
+		case 4:
+			dynamicContent = m.viewContact()
 	}
 
-	// 5. Unimos la columna derecha (Header + Tabs + Cuadro)
-	colDerecha := lipgloss.JoinVertical(lipgloss.Left, header, "\n", tabsRow, dynamicContent)
+	// Right column
+	colRight := lipgloss.JoinVertical(
+		lipgloss.Left,
+		header,
+		"\n",
+		tabsRow,
+		dynamicContent,
+	)
 
-	// 6. Resultado final: ASCII a la izquierda, todo lo demás a la derecha
-	mainLayout := lipgloss.JoinHorizontal(lipgloss.Top, colIzquierda, colDerecha)
-
-	footer := dimStyle.Render("\n  ←/→ tabs   ↑/↓ navegar   q salir")
+	// Main layout
+	//mainLayout := lipgloss.JoinHorizontal(lipgloss.Top, colLeft, colRight)
+	mainLayout := lipgloss.JoinHorizontal(
+			lipgloss.Top, 
+			colLeft, 
+			lipgloss.NewStyle().MarginLeft(2).Render(colRight), // Añade un margen manual aquí
+		)
+	footer := "\n" + dimStyle.Render("  ←/→ tabs   ↑/↓ navigate   q quit")
 
 	return lipgloss.JoinVertical(lipgloss.Left, mainLayout, footer)
 }
 
-func (m model) viewProyectos() string {
-	p := proyectos[m.proyIdx]
+func (m model) viewAbout() string {
+	content := labelStyle.Render("$ whoami") + "\n\n" +
+		"Full Stack Developer passionate about building scalable applications.\n" +
+		"I love learning new technologies, exploring system design, and creating products that solve real problems.\n\n" +
+		greenTextStyle.Render("✓ Open to opportunities and collaborations")
 
-	// Lista de navegación de proyectos
-	lista := ""
-	for i, proj := range proyectos {
-		if i == m.proyIdx {
-			lista += cyanTextStyle.Render("▶ ") + proj.Nombre + "\n"
+	return boxStyle.Render(content)
+}
+
+func (m model) viewSkills() string {
+	skill := skills[m.skillIdx]
+	
+	// Skill list
+	skillList := ""
+	for i, s := range skills {
+		if i == m.skillIdx {
+			skillList += cyanTextStyle.Render("▶ ") + s.Category + "\n"
 		} else {
-			lista += "  " + proj.Nombre + "\n"
+			skillList += "  " + s.Category + "\n"
 		}
 	}
 
-	contenido := lipgloss.JoinVertical(lipgloss.Left,
-		labelStyle.Render("PROJECTS"),
-		"\n"+lista,
-		"\n"+labelStyle.Render("DETAILS"),
-		p.Desc,
-		dimStyle.Render("Stack: ")+p.Stack,
-		dimStyle.Render("URL:   ")+p.URL,
+	// Skill items
+	skillItems := ""
+	for _, item := range skill.Items {
+		skillItems += "  • " + item + "\n"
+	}
+
+	content := lipgloss.JoinVertical(lipgloss.Left,
+		labelStyle.Render("CATEGORIES"),
+		"\n"+skillList,
+		"\n"+labelStyle.Render(skill.Category),
+		skillItems,
 	)
 
-	return boxStyle.Render(contenido)
+	return boxStyle.Render(content)
 }
 
-// ── Servidor SSH ───────────────────────────────────────────────────────────
+func (m model) viewProjects() string {
+	p := projects[m.projIdx]
+	
+	// Project list
+	projList := ""
+	for i, proj := range projects {
+		if i == m.projIdx {
+			projList += cyanTextStyle.Render("▶ ") + proj.Name + "\n"
+		} else {
+			projList += "  " + proj.Name + "\n"
+		}
+	}
+
+	content := lipgloss.JoinVertical(lipgloss.Left,
+		labelStyle.Render("PROJECTS"),
+		"\n"+projList,
+		"\n"+labelStyle.Render("DETAILS"),
+		p.Desc,
+		"\n"+dimStyle.Render("Stack: ")+p.Stack,
+		dimStyle.Render("GitHub: ")+p.URL,
+	)
+
+	return boxStyle.Render(content)
+}
+
+func (m model) viewExperience() string {
+	exp := experience[m.expIdx]
+	
+	// Experience list
+	expList := ""
+	for i, e := range experience {
+		if i == m.expIdx {
+			expList += cyanTextStyle.Render("▶ ") + e.Title + "\n"
+		} else {
+			expList += "  " + e.Title + "\n"
+		}
+	}
+
+	content := lipgloss.JoinVertical(lipgloss.Left,
+		labelStyle.Render("EXPERIENCE"),
+		"\n"+expList,
+		"\n"+labelStyle.Render(exp.Title),
+		dimStyle.Render(exp.Company+" • "+exp.Period),
+		"\n"+exp.Desc,
+	)
+
+	return boxStyle.Render(content)
+}
+
+func (m model) viewContact() string {
+	content := labelStyle.Render("$ contact --list") + "\n\n" +
+		"Email:    albacostasfernandez@gmail.com\n" +
+		"GitHub:   github.com/albacostas\n" +
+		"LinkedIn: linkedin.com/in/albacostasfernandez\n" +
+		"Twitter:  @albacostas\n\n" +
+		greenTextStyle.Render("Let's build something amazing together! 🚀")
+
+	return boxStyle.Render(content)
+}
+
+// ── Server ────────────────────────────────────────────────────────────────
 
 func main() {
 	srv, err := wish.NewServer(
@@ -261,7 +408,8 @@ func main() {
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, syscall.SIGINT, syscall.SIGTERM)
 
-	fmt.Println("🚀 Portfolio SSH en :2222")
+	fmt.Println("🚀 SSH Portfolio running on :2222")
+	fmt.Println("📍 Connect with: ssh -p 2222 localhost")
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, ssh.ErrServerClosed) {
 			fmt.Println("Error:", err)
