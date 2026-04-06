@@ -17,8 +17,6 @@ import (
 	bbtea "github.com/charmbracelet/wish/bubbletea"
 )
 
-// ── Refined Styles ────────────────────────────────────────────────────────
-
 var (
 	accentColor = lipgloss.Color("#7C3AED")
 	cyanColor   = lipgloss.Color("#22D3EE")
@@ -140,7 +138,14 @@ var projects = []Project{
 			"  Built with low-latency signal processing (512-frame buffer).",
 		Stack: "C++ · OpenGL · PortAudio · GLUT",
 		URL:   "https://github.com/albacostas/audio-visualizer",
-	}
+	},
+	{
+		Name: "MyCalendar",
+		Desc: "Calendar app for ios with a focus on simplicity and usability.\n"+
+			"  Clean and intuitive design",
+		Stack: "Swift · SwiftUI · EventKit",
+		URL:   "github.com/albacostas/MyCalendar",
+	},
 }
 
 var skills = []Skill{
@@ -150,7 +155,8 @@ var skills = []Skill{
 	},
 	{
 		Category: "Frontend",
-		Items:    []string{"SwiftUI", "HTML/CSS", "Tailwind CSS"},
+		Items:    []string{"SwiftUI", "HTML/CSS"},
+		//Items:    []string{"SwiftUI", "HTML/CSS", "Tailwind CSS"},
 	},
 	{
 		Category: "Backend",
@@ -238,15 +244,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // ── Rendering ─────────────────────────────────────────────────────────────
 
 func (m model) View() string {
-	if m.width == 0 {
-		return "Loading..."
-	}
+	if m.width == 0 {return "Loading..."}
 
 	asciiContent := avatarASCII
 	colLeft := asciiStyle.Width(80).Render(asciiContent)
-	// Left column: ASCII art
-	//colLeft := asciiStyle.Render(strings.TrimSpace(avatarASCII))
-
+	
 	// Header
 	header := titleStyle.Render("Alba Costas Fernández — Developer") + "\n" +
 		dimStyle.Render("📍 Santiago de Compostela, Spain") + "\n" +
@@ -287,7 +289,6 @@ func (m model) View() string {
 	)
 
 	// Main layout
-	//mainLayout := lipgloss.JoinHorizontal(lipgloss.Top, colLeft, colRight)
 	mainLayout := lipgloss.JoinHorizontal(
 			lipgloss.Top, 
 			colLeft, 
